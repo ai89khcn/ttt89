@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- Tối ưu hiển thị, khóa zoom, ép chạy full màn hình giống App -->
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+
+  <title>TTHY - Hệ thống Quản lý Tổng hợp</title>
+
+  <!-- PWA Meta Tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TTHY App">
+  <meta name="theme-color" content="#1e293b">
+
+  <!-- Logo lấy từ Google Drive của anh -->
+  <link rel="apple-touch-icon" href="https://drive.google.com/uc?id=1qnYE0qNfE8RJDkKLpGMTQSjXmnxB4RCO">
+  <link rel="icon" type="image/png" href="https://drive.google.com/uc?id=1qnYE0qNfE8RJDkKLpGMTQSjXmnxB4RCO">
+
+  <!-- PWA Manifest (Chỉ cần file ảo dạng Base64 để đánh lừa Chrome trên Android) -->
+  <link rel="manifest"
+    href="data:application/manifest+json;base64,eyJuYW1lIjoiVFRIWSBBcHAiLCJzaG9ydF9uYW1lIjoiVFRIWSIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzFlMjkzYiIsInRoZW1lX2NvbG9yIjoiIzFlMjkzYiIsImljb25zIjpbeyJzcmMiOiJodHRwczovL2RyaXZlLmdvb2dsZS5jb20vdWM/aWQ9MXFuWUUwcU5mRThSSkRrS0xwR01UUVNqWG1ueEI0UkNPIiwic2l6ZXMiOiIyNTZ4MjU2IiwidHlwZSI6ImltYWdlL3BuZyJ9XX0=">
+
+  <style>
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      /* Chống cuộn bên ngoài vỏ */
+      background-color: #1e293b;
+      /* Trùng với màu nền lúc loading để mượt hơn */
+    }
+
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- THAY LINK WEB APP CỦA ANH VÀO DÒNG BÊN DƯỚI -->
+  <iframe
+    src="https://script.google.com/macros/s/AKfycbzbQmqC0yt71AL74EKwQrc7Vq9AA7zySAaNbtT2YWo64-9qwnVlgV3C98CvnOiNj0pJ/exec"
+    allowfullscreen="true" allow="clipboard-read; clipboard-write"></iframe>
+</body>
+
+</html>
