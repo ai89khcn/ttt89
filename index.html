@@ -47,11 +47,13 @@
 
   <script>
     // Chỉ nhận tín hiệu từ hệ sinh thái Google Apps Script
-    const GAS_ORIGIN = 'https://script.googleusercontent.com';
+    // GAS dùng subdomain động (ví dụ: n-a77itl...script.googleusercontent.com)
+    const GAS_DOMAIN_SUFFIX = 'script.googleusercontent.com';
     const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 ngày
 
     window.addEventListener('message', function(event) {
-      if (event.origin !== GAS_ORIGIN) return; // Bảo vệ: chỉ tin tưởng GAS
+      // Bảo vệ: chỉ tin tưởng request đến từ các subdomain của script.googleusercontent.com
+      if (!event.origin.endsWith(GAS_DOMAIN_SUFFIX)) return; 
       
       const data = event.data;
       if (!data) return;
@@ -75,14 +77,14 @@
             const authData = JSON.parse(storedStr);
             const age = Date.now() - authData.savedAt;
             if (age < TTL_MS) {
-              // Còn hạn -> Trả về cho iframe
-              const iframe = document.getElementById('gas-iframe');
-              if (iframe && iframe.contentWindow) {
-                iframe.contentWindow.postMessage({
+              // Còn hạn -> Trả về cho chính window gửi request (event.source)
+              // Kèm theo đúng cái origin động (event.origin) để bảo mật
+              if (event.source) {
+                event.source.postMessage({
                   type: 'PROVIDE_AUTH',
                   token: authData.token,
                   user: authData.user
-                }, GAS_ORIGIN);
+                }, event.origin);
               }
             } else {
               // Hết hạn -> Xóa
