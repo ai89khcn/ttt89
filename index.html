@@ -136,6 +136,8 @@
     const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 ngày
     let iframeOrigin = '';
     let iframeWindow = null;
+    let gasReady = false;
+    let pendingLogin = null;
 
     window.addEventListener('message', function(event) {
       if (!event.origin.includes('googleusercontent.com') && !event.origin.includes('google.com')) return; 
@@ -176,6 +178,20 @@
         document.getElementById('error-msg').innerText = data.error || 'Đăng nhập thất bại';
       }
       else if (data.type === 'REQUEST_AUTH') {
+        gasReady = true;
+        
+        // Nếu user đã ấn Đăng nhập trước khi GAS tải xong
+        if (pendingLogin) {
+          iframeWindow.postMessage({
+            type: 'LOGIN_REQUEST',
+            username: pendingLogin.u,
+            password: pendingLogin.p,
+            remember: pendingLogin.remember
+          }, iframeOrigin);
+          pendingLogin = null;
+          return;
+        }
+
         const storedStr = localStorage.getItem('tthy_auth');
         if (storedStr) {
           try {
@@ -234,25 +250,15 @@
       const p = document.getElementById('password').value;
       const remember = document.getElementById('remember-me') ? document.getElementById('remember-me').checked : false;
 
-      // Đôi khi iframe chưa kịp load xong mà user đã ấn submit -> đợi
-      if (!iframeWindow || !iframeOrigin) {
-        const gasIframe = document.getElementById('gas-iframe');
-        if (gasIframe.contentWindow) {
-           // Thử gửi dạng wildcard tạm thời để iframe catch
-           gasIframe.contentWindow.postMessage({
-             type: 'LOGIN_REQUEST',
-             username: u, password: p, remember: remember
-           }, '*');
-           setLoading(true);
-           return;
-        } else {
-           document.getElementById('error-msg').innerText = 'Hệ thống chưa kết nối được với máy chủ. Vui lòng tải lại trang.';
-           return;
-        }
+      setLoading(true);
+
+      // Nếu GAS chưa load xong, đưa vào hàng đợi
+      if (!gasReady || !iframeWindow || !iframeOrigin) {
+        pendingLogin = { u, p, remember };
+        return;
       }
 
-      setLoading(true);
-      
+      // Đã sẵn sàng -> Gửi ngay
       iframeWindow.postMessage({
         type: 'LOGIN_REQUEST',
         username: u,
