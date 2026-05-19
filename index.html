@@ -3,9 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <!-- Tối ưu hiển thị, khóa zoom, ép chạy full màn hình giống App -->
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 
   <title>TTHY - Hệ thống Quản lý Tổng hợp</title>
 
@@ -16,45 +14,134 @@
   <meta name="apple-mobile-web-app-title" content="TTHY App">
   <meta name="theme-color" content="#1e293b">
 
-  <!-- Logo up trực tiếp lên Github cùng file index.html -->
+  <!-- Logo -->
   <link rel="apple-touch-icon" href="./Logo.png">
   <link rel="icon" type="image/png" href="./Logo.png">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- PWA Manifest (Chỉ cần file ảo dạng Base64 để đánh lừa Chrome trên Android) -->
-  <link rel="manifest"
-    href="data:application/manifest+json;base64,eyJuYW1lIjoiVFRIWSBBcHAiLCJzaG9ydF9uYW1lIjoiVFRIWSIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzFlMjkzYiIsInRoZW1lX2NvbG9yIjoiIzFlMjkzYiIsImljb25zIjpbeyJzcmMiOiJodHRwczovL2RyaXZlLmdvb2dsZS5jb20vdWM/aWQ9MXFuWUUwcU5mRThSSkRrS0xwR01UUVNqWG1ueEI0UkNPIiwic2l6ZXMiOiIyNTZ4MjU2IiwidHlwZSI6ImltYWdlL3BuZyJ9XX0=">
+  <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiVFRIWSBBcHAiLCJzaG9ydF9uYW1lIjoiVFRIWSIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzFlMjkzYiIsInRoZW1lX2NvbG9yIjoiIzFlMjkzYiIsImljb25zIjpbeyJzcmMiOiJodHRwczovL2RyaXZlLmdvb2dsZS5jb20vdWM/aWQ9MXFuWUUwcU5mRThSSkRrS0xwR01UUVNqWG1ueEI0UkNPIiwic2l6ZXMiOiIyNTZ4MjU2IiwidHlwZSI6ImltYWdlL3BuZyJ9XX0=">
 
   <style>
-    body,
-    html {
+    :root {
+      --navy: #1e3a8a;
+      --navy-light: #3b82f6;
+      --navy-dark: #1e293b;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+    }
+
+    body, html {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
       overflow: hidden;
-      /* Chống cuộn bên ngoài vỏ */
-      background-color: #1e293b;
-      /* Trùng với màu nền lúc loading để mượt hơn */
+      background-color: var(--navy-dark);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
     iframe {
       width: 100vw;
       height: 100vh;
       border: none;
-      display: block;
+      display: none; /* Ẩn iframe lúc đầu, đợi xác thực */
+    }
+
+    /* Styles cho Form Đăng Nhập PWA */
+    #login-container {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--navy-dark);
+      display: flex; /* Mặc định hiện form */
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-content {
+      background: white;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 16px;
+      padding: 30px 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      box-sizing: border-box;
+    }
+
+    .text-center { text-align: center; }
+    .mb-6 { margin-bottom: 1.5rem; }
+    
+    .logo-box {
+      width: 60px; height: 60px; 
+      background: var(--navy-light); 
+      border-radius: 12px; 
+      display: flex; align-items: center; justify-content: center; 
+      margin: 0 auto 15px;
+    }
+
+    h2 { color: var(--navy); font-size: 1.5rem; font-weight: 800; margin: 0 0 5px; }
+    p { color: var(--slate-500); font-size: 0.9rem; margin: 0; }
+
+    .form-group { margin-bottom: 1rem; text-align: left; }
+    label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--slate-600); font-size: 0.9rem; }
+    
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.2s;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+    input[type="text"]:focus, input[type="password"]:focus {
+      border-color: var(--navy-light);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .btn-primary {
+      background-color: var(--navy-light);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 1rem;
+    }
+    .btn-primary:hover { background-color: #2563eb; }
+    .btn-primary:disabled { background-color: var(--slate-400); cursor: not-allowed; }
+
+    .error-message {
+      color: #ef4444;
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 10px;
+      min-height: 20px;
     }
   </style>
 
   <script>
-    // Chỉ nhận tín hiệu từ hệ sinh thái Google Apps Script
-    // GAS dùng subdomain động (ví dụ: n-a77itl...script.googleusercontent.com)
     const GAS_DOMAIN_SUFFIX = 'script.googleusercontent.com';
     const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 ngày
+    let iframeOrigin = '';
+    let iframeWindow = null;
 
     window.addEventListener('message', function(event) {
-      // Bảo vệ: chỉ tin tưởng request đến từ các subdomain của script.googleusercontent.com
       if (!event.origin.endsWith(GAS_DOMAIN_SUFFIX)) return; 
       
+      iframeOrigin = event.origin;
+      iframeWindow = event.source;
       const data = event.data;
       if (!data) return;
 
@@ -69,16 +156,32 @@
       else if (data.type === 'CLEAR_AUTH') {
         localStorage.removeItem('tthy_auth');
       }
+      else if (data.type === 'SHOW_LOGIN') {
+        showLoginForm();
+      }
+      else if (data.type === 'LOGIN_SUCCESS') {
+        const authData = {
+          token: data.token,
+          user: data.user,
+          savedAt: Date.now()
+        };
+        localStorage.setItem('tthy_auth', JSON.stringify(authData));
+        
+        hideLoginForm();
+        setLoading(false);
+        document.getElementById('error-msg').innerText = '';
+      }
+      else if (data.type === 'LOGIN_FAILED') {
+        setLoading(false);
+        document.getElementById('error-msg').innerText = data.error || 'Đăng nhập thất bại';
+      }
       else if (data.type === 'REQUEST_AUTH') {
-        // Iframe yêu cầu token khi khởi động
         const storedStr = localStorage.getItem('tthy_auth');
         if (storedStr) {
           try {
             const authData = JSON.parse(storedStr);
             const age = Date.now() - authData.savedAt;
             if (age < TTL_MS) {
-              // Còn hạn -> Trả về cho chính window gửi request (event.source)
-              // Kèm theo đúng cái origin động (event.origin) để bảo mật
               if (event.source) {
                 event.source.postMessage({
                   type: 'PROVIDE_AUTH',
@@ -86,21 +189,134 @@
                   user: authData.user
                 }, event.origin);
               }
+              // Có token -> ẩn form đăng nhập, chờ iframe load xong
+              hideLoginForm();
             } else {
-              // Hết hạn -> Xóa
               localStorage.removeItem('tthy_auth');
+              showLoginForm();
             }
           } catch (e) {
              localStorage.removeItem('tthy_auth');
+             showLoginForm();
           }
+        } else {
+          showLoginForm();
         }
       }
     });
+
+    function showLoginForm() {
+      document.getElementById('login-container').style.display = 'flex';
+      document.getElementById('gas-iframe').style.display = 'none';
+    }
+
+    function hideLoginForm() {
+      document.getElementById('login-container').style.display = 'none';
+      document.getElementById('gas-iframe').style.display = 'block';
+    }
+
+    function setLoading(isLoading) {
+      const btn = document.getElementById('btn-login');
+      if (isLoading) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Đăng Nhập';
+      }
+    }
+
+    function handlePwaLogin(e) {
+      e.preventDefault();
+      document.getElementById('error-msg').innerText = '';
+      
+      const u = document.getElementById('username').value;
+      const p = document.getElementById('password').value;
+      const remember = document.getElementById('remember-me') ? document.getElementById('remember-me').checked : false;
+
+      // Đôi khi iframe chưa kịp load xong mà user đã ấn submit -> đợi
+      if (!iframeWindow || !iframeOrigin) {
+        const gasIframe = document.getElementById('gas-iframe');
+        if (gasIframe.contentWindow) {
+           // Thử gửi dạng wildcard tạm thời để iframe catch
+           gasIframe.contentWindow.postMessage({
+             type: 'LOGIN_REQUEST',
+             username: u, password: p, remember: remember
+           }, '*');
+           setLoading(true);
+           return;
+        } else {
+           document.getElementById('error-msg').innerText = 'Hệ thống chưa kết nối được với máy chủ. Vui lòng tải lại trang.';
+           return;
+        }
+      }
+
+      setLoading(true);
+      
+      iframeWindow.postMessage({
+        type: 'LOGIN_REQUEST',
+        username: u,
+        password: p,
+        remember: remember
+      }, iframeOrigin);
+    }
+    
+    function togglePasswordVisibility(inputId, iconEl) {
+      const input = document.getElementById(inputId);
+      if (input) {
+        if (input.type === 'password') {
+          input.type = 'text';
+          iconEl.classList.remove('fa-eye');
+          iconEl.classList.add('fa-eye-slash');
+        } else {
+          input.type = 'password';
+          iconEl.classList.remove('fa-eye-slash');
+          iconEl.classList.add('fa-eye');
+        }
+      }
+    }
   </script>
 </head>
 
 <body>
-  <!-- THAY LINK WEB APP CỦA ANH VÀO DÒNG BÊN DƯỚI -->
+  <!-- MÀN HÌNH ĐĂNG NHẬP PWA (FIRST-PARTY CONTEXT) -->
+  <div id="login-container" style="display: none;">
+    <div class="modal-content">
+      <div class="text-center mb-6">
+        <div class="logo-box">
+           <i class="fa-solid fa-scale-balanced text-white" style="font-size: 24px; color: white;"></i>
+        </div>
+        <h2>ĐĂNG NHẬP</h2>
+        <p>Hệ thống Quản lý TTHY</p>
+      </div>
+      
+      <form id="login-form" onsubmit="handlePwaLogin(event)" action="javascript:void(0)" method="post">
+        <div class="form-group">
+          <label for="username">Email / Tài khoản</label>
+          <input type="text" id="username" name="username" required placeholder="example@gmail.com" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <div style="position: relative; display: flex; align-items: center;">
+            <input type="password" id="password" name="password" required placeholder="••••••••" style="padding-right: 40px;" autocomplete="current-password">
+            <i class="fa-solid fa-eye" style="position: absolute; right: 12px; cursor: pointer; color: #94a3b8;" onclick="togglePasswordVisibility('password', this)"></i>
+          </div>
+        </div>
+        <div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+          <input type="checkbox" id="remember-me" name="remember" style="width: 18px; height: 18px; cursor: pointer;">
+          <label for="remember-me" style="margin-bottom: 0; cursor: pointer; user-select: none;">Duy trì đăng nhập (7 ngày)</label>
+        </div>
+        
+        <div id="error-msg" class="error-message"></div>
+
+        <button type="submit" id="btn-login" class="btn-primary">
+          <i class="fa-solid fa-right-to-bracket"></i> Đăng Nhập
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- IFRAME -->
   <iframe
     id="gas-iframe"
     src="https://script.google.com/macros/s/AKfycbzbQmqC0yt71AL74EKwQrc7Vq9AA7zySAaNbtT2YWo64-9qwnVlgV3C98CvnOiNj0pJ/exec"
