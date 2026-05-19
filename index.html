@@ -181,6 +181,8 @@
         removeAppStorage('tthy_auth');
       }
       else if (data.type === 'SHOW_LOGIN') {
+        document.getElementById('pwa-login-form').style.opacity = '1';
+        setLoading(false);
         showLoginForm();
       }
       else if (data.type === 'HIDE_LOGIN') {
@@ -256,14 +258,17 @@
       document.getElementById('gas-iframe').style.display = 'block';
     }
 
-    function setLoading(isLoading) {
+    function setLoading(isLoading, text = "Đang xử lý...") {
       const btn = document.getElementById('btn-login');
+      const overlay = document.getElementById('pwa-loading');
+      const textSpan = document.getElementById('pwa-loading-text');
       if (isLoading) {
         btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
+        textSpan.innerText = text;
+        overlay.style.display = 'flex';
       } else {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Đăng Nhập';
+        overlay.style.display = 'none';
       }
     }
 
@@ -275,15 +280,13 @@
       const p = document.getElementById('password').value;
       const remember = document.getElementById('remember-me') ? document.getElementById('remember-me').checked : false;
 
-      setLoading(true);
+      setLoading(true, "Đang xác thực...");
 
-      // Nếu GAS chưa load xong, đưa vào hàng đợi
       if (!gasReady || !iframeWindow || !iframeOrigin) {
         pendingLogin = { u, p, remember };
         return;
       }
 
-      // Đã sẵn sàng -> Gửi ngay
       iframeWindow.postMessage({
         type: 'LOGIN_REQUEST',
         username: u,
@@ -306,13 +309,25 @@
         }
       }
     }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const initialAuth = getAppStorage('tthy_auth');
+      if (initialAuth) {
+        try {
+          const authData = JSON.parse(initialAuth);
+          if (Date.now() - authData.savedAt < TTL_MS) {
+            document.getElementById('pwa-login-form').style.opacity = '0';
+            setLoading(true, "Đang kết nối hệ thống...");
+          }
+        } catch(e) {}
+      }
+    });
   </script>
 </head>
 
 <body>
-  <!-- MÀN HÌNH ĐĂNG NHẬP PWA (FIRST-PARTY CONTEXT) -->
   <div id="login-container">
-    <div class="modal-content">
+    <div class="modal-content" id="pwa-login-form">
       <div class="text-center mb-6">
         <div class="logo-box">
            <i class="fa-solid fa-scale-balanced text-white" style="font-size: 24px; color: white;"></i>
@@ -343,11 +358,15 @@
         <button type="submit" id="btn-login" class="btn-primary">
           <i class="fa-solid fa-right-to-bracket"></i> Đăng Nhập
         </button>
+        
+        <div id="pwa-loading" class="loading-overlay" style="display: none;">
+          <div class="spinner"></div>
+          <span id="pwa-loading-text">Đang xử lý...</span>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- IFRAME -->
   <iframe
     id="gas-iframe"
     src="https://script.google.com/macros/s/AKfycbzbQmqC0yt71AL74EKwQrc7Vq9AA7zySAaNbtT2YWo64-9qwnVlgV3C98CvnOiNj0pJ/exec"
