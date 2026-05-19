@@ -138,7 +138,7 @@
     let iframeWindow = null;
 
     window.addEventListener('message', function(event) {
-      if (!event.origin.endsWith(GAS_DOMAIN_SUFFIX)) return; 
+      if (!event.origin.includes('googleusercontent.com') && !event.origin.includes('google.com')) return; 
       
       iframeOrigin = event.origin;
       iframeWindow = event.source;
@@ -280,7 +280,7 @@
 
 <body>
   <!-- MÀN HÌNH ĐĂNG NHẬP PWA (FIRST-PARTY CONTEXT) -->
-  <div id="login-container" style="display: none;">
+  <div id="login-container">
     <div class="modal-content">
       <div class="text-center mb-6">
         <div class="logo-box">
